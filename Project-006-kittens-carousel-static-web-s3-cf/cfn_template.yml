@@ -9,7 +9,7 @@ Parameters:
     AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
 
 Resources:
-  WebS3Bucket:
+  S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref KittensSubDomainName
@@ -20,10 +20,10 @@ Resources:
         BlockPublicAcls: FALSE
       WebsiteConfiguration:
         IndexDocument: index.html
-  WebS3BucketPolicy:
+  S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref WebS3Bucket
+      Bucket: !Ref S3Bucket
       PolicyDocument: 
         Version: 2012-10-17
         Statement:
@@ -33,7 +33,7 @@ Resources:
             Resource: !Join
               - ''
               - - 'arn:aws:s3:::'
-                - !Ref WebS3Bucket
+                - !Ref S3Bucket
                 - /*
             Principal: '*'
   MyCloudFront:
@@ -79,7 +79,7 @@ Resources:
 Outputs:
   BucketName: 
     Description: S3 Bucket URL for Kittens Website
-    Value: !GetAtt WebS3Bucket.WebsiteURL
+    Value: !GetAtt S3Bucket.WebsiteURL
   CloudfrontEndpoint:
     Description: Endpoint for Kittens Cloudfront
     Value: !GetAtt MyCloudFront.DomainName
