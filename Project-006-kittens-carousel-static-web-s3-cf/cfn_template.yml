@@ -58,8 +58,8 @@ Resources:
           - CustomOriginConfig:
               OriginProtocolPolicy: http-only 
             DomainName: !Select [2, !Split ["/", !GetAtt WebS3Bucket.WebsiteURL]]
-            Id: KittensOrigin
-        PriceClass: String
+            Id: seymacfn
+        PriceClass: PriceClass_All
         ViewerCertificate: 
           AcmCertificateArn: arn:aws:acm:us-east-1:153686676156:certificate/9eeb9aaf-c43c-4a06-9914-5c11ad33affa
           MinimumProtocolVersion: TLSv1.2_2021
