@@ -1,1 +1,0 @@
-# web_static_s3_cfn

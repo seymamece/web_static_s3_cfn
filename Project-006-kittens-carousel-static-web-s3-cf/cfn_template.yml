@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  This cfn file is used for creating a template which runs S3 static webhosting using cloudfront distrubution
+Parameters:
+
+  KittensSubDomainName:
+    Description: full domain name like kittens.seymadevops.me
+    Type: String
+    AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
+
+Resources:
+  WebS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref KittensSubDomainName
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: FALSE
+      WebsiteConfiguration:
+        IndexDocument: index.html
+  WebS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebS3Bucket
+      PolicyDocument: 
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref WebS3Bucket
+                - /*
+            Principal: '*'
+  MyCloudFront:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases: 
+        - !Ref KittensSubDomainName
+        Comment: My first cloudfront cfn
+        DefaultCacheBehavior: 
+          AllowedMethods:
+            - Get 
+            - HEAD 
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          Compress: true
+          TargetOriginId: seymacfn
+          ViewerProtocolPolicy: allow-all 
+        DefaultRootObject: index.html
+        Enabled: true 
+        HttpVersion: http2
+        Origins: 
+          - CustomOriginConfig:
+              OriginProtocolPolicy: http-only 
+            DomainName: !Select [2, !Split ["/", !GetAtt KittensBucket.WebsiteURL]]
+            Id: KittensOrigin
+        PriceClass: String
+        ViewerCertificate: 
+          AcmCertificateArn: arn:aws:acm:us-east-1:153686676156:certificate/9eeb9aaf-c43c-4a06-9914-5c11ad33affa
+          MinimumProtocolVersion: TLSv1.2_2021
+          SslSupportMethod: sni-only
+  
+  Route53:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: Z08348542LMKDSH94CCW6
+      RecordSets: 
+        - AliasTarget:
+            DNSName: !GetAtt MyCloudFront.DomainName
+            HostedZoneId: Z08348542LMKDSH94CCW6
+          Name: !Ref KittensSubDomainName
+          Type: A 
+
+Outputs:
+  BucketName: 
+    Description: S3 Bucket URL for Kittens Website
+    Value: !GetAtt WebS3Bucket.WebsiteURL
+  CloudfrontEndpoint:
+    Description: Endpoint for Kittens Cloudfront
+    Value: !GetAtt MyCloudFront.DomainName
+  FullDomainName:
+    Description: Full Domain Name of my Application
+    Value: !Ref KittensSubDomainName
