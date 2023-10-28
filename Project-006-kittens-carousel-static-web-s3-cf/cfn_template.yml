@@ -68,11 +68,11 @@ Resources:
   Route53:
     Type: AWS::Route53::RecordSetGroup
     Properties:
-      HostedZoneId: Z08348542LMKDSH94CCW6
+      HostedZoneId: Z0930220ECN0S707TWB
       RecordSets: 
         - AliasTarget:
             DNSName: !GetAtt MyCloudFront.DomainName
-            HostedZoneId: Z08348542LMKDSH94CCW6
+            HostedZoneId: Z2FDTNDATAQYW2
           Name: !Ref KittensSubDomainName
           Type: A 
 
