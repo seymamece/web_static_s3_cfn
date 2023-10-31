@@ -7,7 +7,7 @@ Parameters:
     Type: String
     AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
 Resources:
-  S3Bucket:
+  SeymaS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref KittensSubDomainName
@@ -18,10 +18,10 @@ Resources:
         BlockPublicAcls: FALSE
       WebsiteConfiguration:
         IndexDocument: index.html
-  S3BucketPolicy:
+  SeymaS3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref S3Bucket
+      Bucket: !Ref SeymaS3Bucket
       PolicyDocument: 
         Version: 2012-10-17
         Statement:
@@ -31,7 +31,7 @@ Resources:
             Resource: !Join
               - ''
               - - 'arn:aws:s3:::'
-                - !Ref S3Bucket
+                - !Ref SeymaS3Bucket
                 - /*
             Principal: '*'
   MyCloudFront:
@@ -55,7 +55,7 @@ Resources:
         Origins: 
           - CustomOriginConfig:
               OriginProtocolPolicy: http-only 
-            DomainName: !Select [2, !Split ["/", !GetAtt S3Bucket.WebsiteURL]]
+            DomainName: !Select [2, !Split ["/", !GetAtt SeymaS3Bucket.WebsiteURL]]
             Id: seymacfn
         PriceClass: PriceClass_All
         ViewerCertificate: 
@@ -75,7 +75,7 @@ Resources:
 Outputs:
   BucketName: 
     Description: S3 Bucket URL for Kittens Website
-    Value: !GetAtt S3Bucket.WebsiteURL
+    Value: !GetAtt SeymaS3Bucket.WebsiteURL
   CloudfrontEndpoint:
     Description: Endpoint for Kittens Cloudfront
     Value: !GetAtt MyCloudFront.DomainName
