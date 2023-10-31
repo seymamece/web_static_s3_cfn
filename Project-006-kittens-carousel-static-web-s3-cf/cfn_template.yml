@@ -59,7 +59,7 @@ Resources:
             Id: seymacfn
         PriceClass: PriceClass_All
         ViewerCertificate: 
-          AcmCertificateArn: arn:aws:acm:us-east-1:153686676156:certificate9eeb9aaf-c43c-4a06-9914-5c11ad33affa
+          AcmCertificateArn: arn:aws:acm:us-east-1:153686676156:certificate/88e38873-c93e-4e97-96ef-f81175edf1a2
           MinimumProtocolVersion: TLSv1.2_2021
           SslSupportMethod: sni-only
   Route53:
